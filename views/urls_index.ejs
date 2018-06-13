@@ -12,16 +12,11 @@
     </head>
     <ul>
         <% for (const url in urls) { %>
-            <li>
-                <%= urls[url] %>: has assigned with:
-                    <%= url %>
+            <li>   <%= urls[url] %>: 
+            <br> <b><%= url %></b>           
             </li>
-            <p>The shortening new URL:
-                <href>http://localhost:8080/urls/
-                    <%= url %>
-                </href>
-            </p>
-            <% } %>
+            
+        <% } %>
     </ul>
 </body>
 

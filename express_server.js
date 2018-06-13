@@ -5,7 +5,8 @@ const bodyParser = require("body-parser");
 
 const urlDatabase = {
     "b2xVn2": "http://www.lighthouselabs.ca",
-    "9sm5xK": "http://www.google.com"
+    "9sm5xK": "http://www.google.com",
+    
 };
 
 function generateRandomString() {
@@ -18,7 +19,7 @@ function generateRandomString() {
 }
 
 
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
 app.get("/", (req, res) => {
@@ -30,19 +31,29 @@ app.get("/urls", (req, res) => {
     res.render("urls_index", templateVars);
 });
 
-app.get("/urls/new", (req,res) => {
+app.get("/urls/new", (req, res) => {
     res.render("urls_new");
 });
 
 app.post("/urls", (req, res) => {
-    console.log(req.body);  
-    res.send("Ok");         
-  });
+    console.log(req.body);
+    let shortURL = generateRandomString();
+    let longURL = req.body.longURL;
+    urlDatabase[shortURL] = longURL;
+    res.redirect("/urls");
+});
+
+app.get("/urls/:shortURL", (req, res) => {
+    const longURL = urlDatabase[req.params.shortURL];
+    res.redirect(longURL);
+    
+});
 
 app.get("/urls/:id", (req, res) => {
-    let templateVars = { shortURL: req.params.id,
-                         longURL: urlDatabase[req.params.id] 
-                        };
+    let templateVars = {
+        shortURL: req.params.id,
+        longURL: urlDatabase[req.params.id]
+    };
     res.render("urls_show", templateVars);
 });
 
