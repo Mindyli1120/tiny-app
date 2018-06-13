@@ -1,15 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <title>TinyApp</title>
+    <title>TinyApp</title>
 </head>
+
 <body>
-    <!-- Assign shorten name for URLss -->
+
+    <head>
+        <% include partials/_header %>
+    </head>
     <ul>
         <% for (const url in urls) { %>
-            <li><%= urls[url] %>: has assigned with:  <%= url %></li>
-            <p>The shortening new URL: <href>http://localhost:8080/urls/<%= url %></href> </p>
-        <% } %>
+            <li>
+                <%= urls[url] %>: has assigned with:
+                    <%= url %>
+            </li>
+            <p>The shortening new URL:
+                <href>http://localhost:8080/urls/
+                    <%= url %>
+                </href>
+            </p>
+            <% } %>
     </ul>
 </body>
+
 </html>
