@@ -110,18 +110,22 @@ app.get("/register", (req,res) => {
 });
 
 app.post("/register", (req, res) => {
-    users[generateRandomString()] = {
-        id: generateRandomString(),
+    id = generateRandomString();
+    users[id] = {
+        id: id,
         email: req.body.email,
         password: req.body.password
     }
+    res.cookie('user_id', users[id].id);
     res.redirect("/urls");
 });
+
+
 //username created, and stored in cookies
 app.post("/login", (req, res) => {
     res.cookie('username', req.body.username);
     res.redirect("/urls");
-})
+});
 
 //username log out
 app.post("/logout", (req, res) => {
