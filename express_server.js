@@ -104,27 +104,37 @@ app.post("/urls/:id/delete",(req, res) => {
 });
 
 //user registration
-app.get("/register", (req,res) => {
-    if (!req.body.email || !req.body.password) {
-        res.sendStatus(400);
-    }
-    for (const existusers in users) {
-        if (req.body.email === users[existusers].email) {
-            res.sendStatus(400);
+function validData(data) {
+    if (data.email && data.email.length > 0 && data.password && data.password.length > 0 && data.email) {
+        for (let existusers in users) {
+            if (data.email === users[existusers].email) {
+                return false;
+            }
         }
+        return true;
     }
+    return false;
+}
+
+app.get("/register", (req,res) => {
     res.render("urls_registration");
 });
 
 app.post("/register", (req, res) => {
-    id = generateRandomString();
-    users[id] = {
-        id: id,
-        email: req.body.email,
-        password: req.body.password
+    const valid = validData(req.body);
+    if (valid) {
+        id = generateRandomString();
+        users[id] = {
+            id: id,
+            email: req.body.email,
+            password: req.body.password
+        }
+        res.cookie('user_id', users[id].id);
+        res.redirect("/urls");
+    } else {
+        //error and set statuscode = 400;
+        res.sendStatus(400);
     }
-    res.cookie('user_id', users[id].id);
-    res.redirect("/urls");
 });
 
 
