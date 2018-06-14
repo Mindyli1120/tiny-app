@@ -2,8 +2,12 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
+<<<<<<< HEAD
 const cookieParser = require('cookie-parser')
 
+=======
+const cookieParser = require('cookie-parser');
+>>>>>>> feature/cookies
 
 //url database: supposed, each shortened URL associate with the long URL
 const urlDatabase = {
@@ -62,13 +66,6 @@ app.post("/urls/", (req, res) => {
 });
 
 
-app.get("/u/:shortURL", (req, res) => {
-    const longURL = urlDatabase[req.params.shortURL];
-    res.redirect(longURL);
-
-});
-
-
 app.get("/urls/:id", (req, res) => {
     let templateVars = {
         shortURL: req.params.id,
@@ -86,6 +83,12 @@ app.post("/urls/:id/update", (req,res) => {
     res.redirect("/urls", templateVars);
 });
 
+
+app.get("/u/:id", (req, res) => {
+    const longURL = urlDatabase[req.params.id];
+    res.redirect(longURL);
+
+});
 
 app.get("/urls.json", (req, res) => {
     res.json(urlDatabase);
