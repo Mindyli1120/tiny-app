@@ -105,15 +105,15 @@ app.post("/urls/:id/delete",(req, res) => {
 
 //user registration
 app.get("/register", (req,res) => {
-    res.render("urls_registration");
+    let templateVars = { username: req.cookies["username"] };
+    res.render("urls_registration", templateVars);
 });
 
 app.post("/register", (req, res) => {
-    let templateVars = {
-        email: req.body.email,
-    }
     users[generateRandomString()] = {
-
+        id: generateRandomString(),
+        email: req.body.email,
+        password: req.body.password
     }
     res.redirect("/urls");
 });
