@@ -105,8 +105,15 @@ app.post("/urls/:id/delete",(req, res) => {
 
 //user registration
 app.get("/register", (req,res) => {
-    let templateVars = { username: req.cookies["username"] };
-    res.render("urls_registration", templateVars);
+    if (!req.body.email || !req.body.password) {
+        res.sendStatus(400);
+    }
+    for (const existusers in users) {
+        if (req.body.email === users[existusers].email) {
+            res.sendStatus(400);
+        }
+    }
+    res.render("urls_registration");
 });
 
 app.post("/register", (req, res) => {
@@ -122,16 +129,16 @@ app.post("/register", (req, res) => {
 
 
 //username created, and stored in cookies
-app.post("/login", (req, res) => {
-    res.cookie('username', req.body.username);
-    res.redirect("/urls");
-});
+// app.post("/login", (req, res) => {
+//     res.cookie('username', req.body.username);
+//     res.redirect("/urls");
+// });
 
-//username log out
-app.post("/logout", (req, res) => {
-    res.clearCookie('username');
-    res.redirect("/urls");
-});
+// //username log out
+// app.post("/logout", (req, res) => {
+//     res.clearCookie('username');
+//     res.redirect("/urls");
+// });
 
 //practice//
 app.get("/hello", (req, res) => {
