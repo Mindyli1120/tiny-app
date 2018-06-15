@@ -3,6 +3,9 @@ const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const bcryptjs = require('bcryptjs');
+//const hashedPassword = bcryptjs.hashSync(password, 10);
+
 
 //url database: supposed, each shortened URL associate with the long URL
 const urlDatabase = {
@@ -23,12 +26,12 @@ const users = {
   "0081sb": {
     id: "0081sbd",
     email: "jame@happy.com",
-    password: "purple-monkey-dinosaur"
+    hashedPassword: "purple-monkey-dinosaur"
   },
  "92hdsl": {
     id: "92hdsl",
     email: "yumy@example.com",
-    password: "dishwasher-funk"
+    hashedPassword: "dishwasher-funk"
   }
 }
 
@@ -102,9 +105,9 @@ app.post("/urls/", (req, res) => {
 });
 
 //be able to detect whether the shortURL is belong to the user
-function correctShrtURL(shortURL) {
+function correctShrtURL(shortURL,userID) {
     for (const shrt in urlDatabase) {
-        if ( shortURL === urlDatabase[shrt].shortURL) {
+        if ( shortURL === urlDatabase[shrt].shortURL && userID === urlDatabase[shrt].userID) {
             return true;
         }
     }
@@ -116,8 +119,7 @@ app.get("/urls/:id", (req, res) => {
     const userID = req.cookies.user_id;
     const user = users[userID];
     const shortURL = req.params.id;
-    const correct = correctShrtURL(shortURL);
-    console.log('correct = ' + correct)
+    const correct = correctShrtURL(shortURL, userID);
     if (userID === undefined) {
         res.redirect("/login");
         return;
@@ -183,8 +185,9 @@ app.post("/register", (req, res) => {
         users[id] = {
             id: id,
             email: req.body.email,
-            password: req.body.password
+            hashedPassword: bcryptjs.hashSync(req.body.password, 10)
         }
+        console.log(users[id].hashedPassword);
         res.cookie('user_id', users[id].id);
         res.redirect("/urls");
     } else {
@@ -201,7 +204,8 @@ app.get('/login', (req, res) => {
 function authenticateUser(email, password){
     for (let userID in users) {
         if (users[userID].email === email) {
-            if (users[userID].password === password) {
+            if (bcryptjs.compareSync(password, users[userID].hashedPassword)) {
+                console.log(users[userID].hashedPassword);
                 return users[userID];
             }
 
@@ -211,7 +215,7 @@ function authenticateUser(email, password){
 app.post('/login', (req,res) => {
     const loginEmail = req.body.email;
     const loginPassword = req.body.password;
-    var result = authenticateUser(loginEmail, loginPassword);
+    const result = authenticateUser(loginEmail, loginPassword);
     if(result){
         res.cookie('user_id', result.id)
         res.redirect("/urls");
