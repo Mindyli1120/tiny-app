@@ -68,6 +68,9 @@ app.get("/urls/new", (req, res) => {
 
 //get LongURL -> create shortURL and store in data -> redirect to site /urls
 app.post("/urls/", (req, res) => {
+    if (!res.cookies.user_id) {
+    res.redirect("/login");
+    }
     console.log(req.body);
     let shortURL = generateRandomString();
     let longURL = req.body.longURL;
