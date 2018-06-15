@@ -52,14 +52,25 @@ app.get("/", (req, res) => {
     res.end("Hello!");
 });
 
-//site shows all the ShortURL -> LongURL
-app.get("/urls", (req, res) => {
+//site shows user's the ShortURL -> LongURL
+function urlsForUser(id) {
+    const usersURL = {};
+    for (const url in urlDatabase) {
+        if (urlDatabase[url].userID === id) {
+            let shortURL = urlDatabase[url].shortURL;
+            let longURL = urlDatabase[url].longURL;
+            usersURL[shortURL] = longURL;
+        }
+    }
+    return usersURL;
+}
 
+app.get("/urls", (req, res) => {
     const userID = req.cookies.user_id;
     const user = users[userID];
-
+    const usersURL = urlsForUser(userID);
     let templateVars = {
-        urls: urlDatabase,
+        urls: usersURL,
         user: user
      };
     res.render("urls_index", templateVars);
@@ -86,33 +97,54 @@ app.post("/urls/", (req, res) => {
             shortURL: shortURL,
             longURL: longURL
         }
-        console.log(urlDatabase)
         res.redirect("/urls");
     }
 });
+
+//be able to detect whether the shortURL is belong to the user
+function correctShrtURL(shortURL) {
+    for (const shrt in urlDatabase) {
+        if ( shortURL === urlDatabase[shrt].shortURL) {
+            return true;
+        }
+    }
+    return false;
+}
 
 
 app.get("/urls/:id", (req, res) => {
     const userID = req.cookies.user_id;
     const user = users[userID];
-    let templateVars = {
+    const shortURL = req.params.id;
+    const correct = correctShrtURL(shortURL);
+    console.log('correct = ' + correct)
+    if (userID === undefined) {
+        res.redirect("/login");
+        return;
+    }
+    if (correct) {
+        let templateVars = {
         shortURL: req.params.id,
-        longURL: urlDatabase[req.params.id],
+        longURL: urlDatabase[req.params.id].longURL,
         user: user
-    };
-    res.render("urls_show", templateVars);
+        };
+        res.render("urls_show", templateVars);
+    } else {
+        res.send("Sorry! The short URL is wrong!");
+    }
+
 });
 
 app.post("/urls/:id/update", (req,res) => {
     const shortURL = req.params.id;
     const longURL = req.body.longURL
-    urlDatabase[shortURL] = longURL;
+    urlDatabase[shortURL].longURL = longURL;
     res.redirect("/urls");
 });
 
 
 app.get("/u/:id", (req, res) => {
-    const longURL = urlDatabase[req.params.id];
+    const longURL = urlDatabase[req.params.id].longURL;
     res.redirect(longURL);
 
 });
