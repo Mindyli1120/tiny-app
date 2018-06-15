@@ -6,9 +6,16 @@ const cookieParser = require('cookie-parser');
 
 //url database: supposed, each shortened URL associate with the long URL
 const urlDatabase = {
-    "b2xVn2": "http://www.lighthouselabs.ca",
-    "9sm5xK": "http://www.google.com",
-
+    'hahaha': {
+        userID: "hahaha",
+        shortURL: "b2xVn2",
+        longURL: "http://www.lighthouselabs.ca"
+    },
+    'examp2': {
+        userID: "examp2",
+        shortURL: "9sm5xK",
+        longURL: "http://www.google.com"
+    }
 };
 
 //user database: each userID associate with id, email and password
@@ -74,8 +81,12 @@ app.post("/urls/", (req, res) => {
         let shortURL = generateRandomString();
         let longURL = req.body.longURL;
         let userID = req.cookies.user_id;
-        urlDatabase[userID][shortURL] = longURL;
-        console.log(urlDatabase);
+        urlDatabase[shortURL] = {
+            userID: userID,
+            shortURL: shortURL,
+            longURL: longURL
+        }
+        console.log(urlDatabase)
         res.redirect("/urls");
     }
 });
@@ -143,7 +154,6 @@ app.post("/register", (req, res) => {
             password: req.body.password
         }
         res.cookie('user_id', users[id].id);
-        console.log(users);
         res.redirect("/urls");
     } else {
         //error and set statuscode = 400;
@@ -157,20 +167,13 @@ app.get('/login', (req, res) => {
 });
 
 function authenticateUser(email, password){
-    var flag = false;
     for (let userID in users) {
         if (users[userID].email === email) {
             if (users[userID].password === password) {
-                console.log("user id and password matched");
                 return users[userID];
             }
-            else {
-                flag = true;
-            }
+
         }
-    }
-    if(flag){
-        console.log("user does not matched");
     }
 }
 app.post('/login', (req,res) => {

@@ -13,17 +13,14 @@
 
         <ul>
             <% for (const url in urls) { %>
-                <li>
-
-                    <%= urls[url] %>:
-                    <br><b><%= url %></b>
+                        <li><%= urls[url].longURL %>:
+                        <br><b><%= urls[url].shortURL %></b>
                     <br>
                     <a href="/urls/<%= url %>">Edit</a>
                     <form method="POST" action="/urls/<%= url %>/delete">
                         <button>Delete!</button>
                     </form>
                 </li>
-
             <% } %>
             <br>
             <br>
