@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
-const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const bcryptjs = require('bcryptjs');
 //const hashedPassword = bcryptjs.hashSync(password, 10);
 
@@ -48,7 +48,10 @@ function generateRandomString() {
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['hel980'],
+}));
 
 //initial test of the server
 app.get("/", (req, res) => {
@@ -69,8 +72,12 @@ function urlsForUser(id) {
 }
 
 app.get("/urls", (req, res) => {
-    const userID = req.cookies.user_id;
+    const userID = req.session.user_id;
+    console.log(req.session);
     const user = users[userID];
+    console.log('user', user);
+    console.log('userid', userID);
+
     const usersURL = urlsForUser(userID);
     let templateVars = {
         urls: usersURL,
@@ -81,7 +88,7 @@ app.get("/urls", (req, res) => {
 
 //site user enters LongURL
 app.get("/urls/new", (req, res) => {
-    const userID = req.cookies.user_id;
+    const userID = req.session.user_id;
     const user = users[userID];
     let templateVars = { user: user };
     res.render("urls_new", templateVars);
@@ -89,12 +96,12 @@ app.get("/urls/new", (req, res) => {
 
 //get LongURL -> create shortURL and store in data -> redirect to site /urls
 app.post("/urls/", (req, res) => {
-    if (!req.cookies.user_id) {
+    if (!req.session.user_id) {
         res.redirect("/login");
     } else {
         let shortURL = generateRandomString();
         let longURL = req.body.longURL;
-        let userID = req.cookies.user_id;
+        let userID = req.session.user_id;
         urlDatabase[shortURL] = {
             userID: userID,
             shortURL: shortURL,
@@ -116,7 +123,7 @@ function correctShrtURL(shortURL,userID) {
 
 
 app.get("/urls/:id", (req, res) => {
-    const userID = req.cookies.user_id;
+    const userID = req.session.user_id;
     const user = users[userID];
     const shortURL = req.params.id;
     const correct = correctShrtURL(shortURL, userID);
@@ -187,8 +194,7 @@ app.post("/register", (req, res) => {
             email: req.body.email,
             hashedPassword: bcryptjs.hashSync(req.body.password, 10)
         }
-        console.log(users[id].hashedPassword);
-        res.cookie('user_id', users[id].id);
+        req.session.user_id = users[id].id;
         res.redirect("/urls");
     } else {
         //error and set statuscode = 400;
@@ -213,11 +219,12 @@ function authenticateUser(email, password){
     }
 }
 app.post('/login', (req,res) => {
+    const userID = req.session.user_id;
     const loginEmail = req.body.email;
     const loginPassword = req.body.password;
     const result = authenticateUser(loginEmail, loginPassword);
     if(result){
-        res.cookie('user_id', result.id)
+        req.session.user_id = users[id].id;
         res.redirect("/urls");
     }else{
         res.sendStatus(403);
@@ -226,7 +233,7 @@ app.post('/login', (req,res) => {
 
 //user log out
 app.post("/logout", (req, res) => {
-    res.clearCookie('user_id');
+    req.session = null;
     res.redirect("/urls");
 });
 
