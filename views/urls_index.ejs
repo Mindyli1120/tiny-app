@@ -18,8 +18,8 @@
                     <%= urls[url] %>:
                     <br><b><%= url %></b>
                     <br>
+                    <a href="/urls/<%= url %>">Edit</a>
                     <form method="POST" action="/urls/<%= url %>/delete">
-                        <url><a href="/urls/<%= url %>">Edit</a>
                         <button>Delete!</button>
                     </form>
                 </li>

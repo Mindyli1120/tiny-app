@@ -47,16 +47,22 @@ app.get("/", (req, res) => {
 
 //site shows all the ShortURL -> LongURL
 app.get("/urls", (req, res) => {
+
+    const userID = req.cookies.user_id;
+    const user = users[userID];
+
     let templateVars = {
         urls: urlDatabase,
-        username: req.cookies["username"]
+        user: user
      };
     res.render("urls_index", templateVars);
 });
 
 //site user enters LongURL
 app.get("/urls/new", (req, res) => {
-    let templateVars = { username: req.cookies["username"] };
+    const userID = req.cookies.user_id;
+    const user = users[userID];
+    let templateVars = { user: user };
     res.render("urls_new", templateVars);
 });
 
@@ -71,10 +77,12 @@ app.post("/urls/", (req, res) => {
 
 
 app.get("/urls/:id", (req, res) => {
+    const userID = req.cookies.user_id;
+    const user = users[userID];
     let templateVars = {
         shortURL: req.params.id,
         longURL: urlDatabase[req.params.id],
-        username: req.cookies["username"]
+        user: user
     };
     res.render("urls_show", templateVars);
 });
@@ -130,6 +138,7 @@ app.post("/register", (req, res) => {
             password: req.body.password
         }
         res.cookie('user_id', users[id].id);
+        console.log(users);
         res.redirect("/urls");
     } else {
         //error and set statuscode = 400;
@@ -137,23 +146,46 @@ app.post("/register", (req, res) => {
     }
 });
 
-
-//username created, and stored in cookies
-// app.post("/login", (req, res) => {
-//     res.cookie('username', req.body.username);
-//     res.redirect("/urls");
-// });
-
-// //username log out
-// app.post("/logout", (req, res) => {
-//     res.clearCookie('username');
-//     res.redirect("/urls");
-// });
-
-//practice//
-app.get("/hello", (req, res) => {
-    res.end("<html><body>Hello <b>World</b></body></html>\n");
+//Login Page relate:
+app.get('/login', (req, res) => {
+    res.render("urls_login");
 });
+
+function authenticateUser(email, password){
+    var flag = false;
+    for (let userID in users) {
+        if (users[userID].email === email) {
+            if (users[userID].password === password) {
+                console.log("user id and password matched");
+                return users[userID];
+            }
+            else {
+                flag = true;
+            }
+        }
+    }
+    if(flag){
+        console.log("user does not matched");
+    }
+}
+app.post('/login', (req,res) => {
+    const loginEmail = req.body.email;
+    const loginPassword = req.body.password;
+    var result = authenticateUser(loginEmail, loginPassword);
+    if(result){
+        res.cookie('user_id', result.id)
+        res.redirect("/urls");
+    }else{
+        res.sendStatus(403);
+    }
+});
+
+//user log out
+app.post("/logout", (req, res) => {
+    res.clearCookie('user_id');
+    res.redirect("/urls");
+});
+
 
 app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}!`);
