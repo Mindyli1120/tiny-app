@@ -2,25 +2,25 @@
 <html lang="en">
 
 <head>
+      <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <title>TinyApp</title>
 </head>
 
-<body>
+<body style="font-size:20px; padding:50px;">
 
     <header>
         <% include partials/_header %>
     </header>
 
-        <ul>
+        <ul class="w3-ul">
             <% for (const url in urls) { %>
                 <li>
 
                     <%= urls[url] %>:
                     <br><b><%= url %></b>
-                    <br>
-                    <a href="/urls/<%= url %>">Edit</a>
+                    <button class="w3-button w3-white w3-border w3-border-amber w3-round-large" style="font-size:12px; padding:8px;"><a href="/urls/<%= url %>">Edit</a></button>
                     <form method="POST" action="/urls/<%= url %>/delete">
-                        <button>Delete!</button>
+                        <button class="w3-button w3-white w3-border w3-border-amber w3-round-large" style="font-size:12px; padding:8px;">Delete!</button>
                     </form>
                 </li>
 

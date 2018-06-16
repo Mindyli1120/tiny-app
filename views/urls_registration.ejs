@@ -2,20 +2,26 @@
 <html lang="en">
 
 <head>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <title>TinyApp</title>
 </head>
 
 <body>
-
     <header>
-        <h1>Tiny App</h1>
+        <div class ="w3-container w3-amber w3-text-white w3-padding-48">
+            <h1>Tiny App</h1>
+            <p style="font-size:15px; padding:10px;">Make your URL easy to share!</p>
+        </div>
+        <div class="w3-bar w3-orange">
+            <a href="/urls" class="w3-bar-item w3-button">Home</a>
+        </div>
     </header>
 
         <ul>
             <form method="POST" action="/register">
-                <input id="email" type="email" name="email">
-                <br><input id="password" type="password" name="password">
-                <br><button>Register</button>
+                <p>Email:<input id="email" type="email" name="email"></p>
+                <p>Password: <input id="password" type="password" name="password"></p>
+                <button class="w3-button w3-white w3-border w3-border-amber w3-round-large" style="font-size:15px; padding:8px;">Register</button>
             </form>
             <br>
             <br>

@@ -4,7 +4,7 @@ const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
 const bcryptjs = require('bcryptjs');
-//const hashedPassword = bcryptjs.hashSync(password, 10);
+
 
 
 //url database: supposed, each shortened URL associate with the long URL
@@ -33,7 +33,7 @@ const users = {
     email: "yumy@example.com",
     hashedPassword: "dishwasher-funk"
   }
-}
+};
 
 // generate random shortened url name for the website user presented
 function generateRandomString() {
@@ -43,7 +43,7 @@ function generateRandomString() {
         shortenedName.push(possible[Math.floor(Math.random() * possible.length)]);
     }
     return (shortenedName.join(""));
-}
+};
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -53,10 +53,6 @@ app.use(cookieSession({
   keys: ['hel980'],
 }));
 
-//initial test of the server
-app.get("/", (req, res) => {
-    res.end("Hello!");
-});
 
 //site shows user's the ShortURL -> LongURL
 function urlsForUser(id) {
@@ -69,14 +65,11 @@ function urlsForUser(id) {
         }
     }
     return usersURL;
-}
+};
 
 app.get("/urls", (req, res) => {
     const userID = req.session.user_id;
-    console.log(req.session);
     const user = users[userID];
-    console.log('user', user);
-    console.log('userid', userID);
 
     const usersURL = urlsForUser(userID);
     let templateVars = {
@@ -106,7 +99,7 @@ app.post("/urls/", (req, res) => {
             userID: userID,
             shortURL: shortURL,
             longURL: longURL
-        }
+        };
         res.redirect("/urls");
     }
 });
@@ -121,7 +114,7 @@ function correctShrtURL(shortURL,userID) {
     return false;
 }
 
-
+//Update the of URL
 app.get("/urls/:id", (req, res) => {
     const userID = req.session.user_id;
     const user = users[userID];
@@ -151,7 +144,7 @@ app.post("/urls/:id/update", (req,res) => {
     res.redirect("/urls");
 });
 
-
+//redirect to the websites
 app.get("/u/:id", (req, res) => {
     const longURL = urlDatabase[req.params.id].longURL;
     res.redirect(longURL);
@@ -193,7 +186,7 @@ app.post("/register", (req, res) => {
             id: id,
             email: req.body.email,
             hashedPassword: bcryptjs.hashSync(req.body.password, 10)
-        }
+        };
         req.session.user_id = users[id].id;
         res.redirect("/urls");
     } else {
@@ -202,7 +195,7 @@ app.post("/register", (req, res) => {
     }
 });
 
-//Login Page relate:
+//Login:
 app.get('/login', (req, res) => {
     res.render("urls_login");
 });
@@ -211,7 +204,6 @@ function authenticateUser(email, password){
     for (let userID in users) {
         if (users[userID].email === email) {
             if (bcryptjs.compareSync(password, users[userID].hashedPassword)) {
-                console.log(users[userID].hashedPassword);
                 return users[userID];
             }
 

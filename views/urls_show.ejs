@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+      <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
     <title>TinyApp</title>
 </head>
-<body>
+<body style="font-size:20px; padding:50px;">
     <header>
         <% include partials/_header %>
     </header>
@@ -11,11 +13,12 @@
       <form method="POST" action="/urls/<%= shortURL %>/update">
         ShortURL: <%= shortURL %>
         <br>
-        <label for="longURL">Enter a URL:</label>
-        <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
-        <input type="submit" value="Update">
-      </form>
 
+        <label for="longURL">Enter a  new URL:</label>
+        <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
+
+        <input class="w3-button w3-white w3-border w3-border-amber w3-round-large" style="font-size:15px; padding:8px;"" type="submit" value="Update">
+      </form>
     </ul>
 </body>
 </html>

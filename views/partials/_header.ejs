@@ -2,24 +2,29 @@
 <html lang="en">
 
 <head>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <title>TinyApp</title>
 </head>
 
 <body>
-
     <header>
-      <h1>Tiny App</h1>
+      <div class ="w3-container w3-amber w3-text-white w3-padding-48">
+        <h1>Tiny App</h1>
+        <p style="font-size:15px; padding:10px;">Make your URL easy to share!</p>
+      </div>
+      <div class="w3-bar w3-orange">
+        <a href="/urls" class="w3-bar-item w3-button">Home</a>
+      </div>
       <% if (user) {%>
         <form method="POST" action="/logout">
           <h4>Log in As: <%= user.email %></h4>
-          <input type="submit" value="Log Out">
+          <input class="w3-button w3-white w3-border w3-border-amber w3-round-large" style="font-size:12px; padding:8px;" type="submit" value="Log Out">
         </form>
       <% } else {%>
         <a href="/register">Register></a>
         <a href="/login">Login></a>
       <% } %>
     </header>
-
 </body>
 
 </html>
